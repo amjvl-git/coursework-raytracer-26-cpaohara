@@ -49,12 +49,16 @@ let imageWidth = document.getElementById("canvas").width
 let imageHeight = document.getElementById("canvas").height
 let aspectRatio = document.getElementById("canvas").height / document.getElementById("canvas").width
 
-let colour = new Vec3(180,255,180)
+let colour = new Vec3(0,0,0)
 
 for (let i = 0; i < imageWidth; i++)
 {
     for (let j = 0; j <= imageHeight; j++)
     {
+        let u = i / (imageWidth-1);
+        let v = j / (imageHeight-1);
+        colour.x = v * 255;
+        colour.y = v * 255;
         setPixel(i,j,colour)
     }
 }
