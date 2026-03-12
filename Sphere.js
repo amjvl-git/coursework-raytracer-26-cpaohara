@@ -17,9 +17,10 @@ class Sphere
         //c = constant
         let coefficient_t_sqrd = ray.direction.dot(ray.direction);
         let coefficient_t = ray.direction.scale(2).dot(ray.origin.minus(this.centre));
-        let constant = ray.origin.minus(this.centre).dot(ray.origin.minus(this.centre));
+        let constant = ray.origin.minus(this.centre).dot(ray.origin.minus(this.centre)) - this.radius ** 2;
 
-        let discriminant = coefficient_t ** 2 - (4 * coefficient_t_sqrd * constant);
+        let discriminant = coefficient_t ** 2 - 4 * coefficient_t_sqrd * constant;
+
         
         if(discriminant > 0){
             let solution = (-(coefficient_t)-Math.sqrt(coefficient_t ** 2 - 4 * coefficient_t_sqrd * constant)) / (2 * coefficient_t_sqrd);
