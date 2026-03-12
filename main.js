@@ -1,7 +1,15 @@
 import { Vec3 } from "./Vector3.js";
+import { Ray } from "./Ray.js";
+import { RayCastResult } from "./RayCastResult.js";
+import { Sphere } from "./Sphere.js";
 
 // Calculate the intersection point and normal when a ray hits a sphere. Returns a RayCastResult.
-function hit(ray, t, sphereIndex) {}
+function hit(ray, t, sphereIndex){
+    let intersectionPoint = ray.pointAt(t);
+    let intersectionNormal = intersectionPoint.minus(spheres[sphereIndex].centre).normalised();
+
+    return new RayCastResult(intersectionPoint, intersectionNormal, t, sphereIndex);
+}
 
 // Return a RayCastResult when a ray misses everything in the scene
 function miss()
@@ -12,13 +20,23 @@ function miss()
 // Check whether a ray hits anything in the scene and return a RayCast Result
 function traceRay(ray)
 {
-    return miss()
+    let sphere = spheres[0];
+    let t = sphere.rayIntersects(ray);
+    if(t < 0){
+        return miss();
+    }
+    else{
+        return hit(ray, t, 0);
+    }
 }
 
 // Calculate and return the background colour based on the ray
 function backgroundColour(ray)
 {
-        return new Vec3(0.3,0.5,0.9) // Blue
+    let white = new Vec3(1, 1, 1);
+    let blue = new Vec3(0.3, 0.5, 0.9);
+    let t = 0.5*(ray.direction.y + 1.0);
+    return white.scale(1-t).add(blue.scale(t));
 }
 
 // Returns the colour the ray should have as a Vec3 with RGB values in [0,1]
@@ -49,6 +67,15 @@ let imageWidth = document.getElementById("canvas").width
 let imageHeight = document.getElementById("canvas").height
 let aspectRatio = document.getElementById("canvas").height / document.getElementById("canvas").width
 
+let viewportWidth = 2;
+let viewportHeight = viewportWidth * aspectRatio;
+let focalLength = 1.0;
+
+let camPosition = new Vec3(0, 0, 0);
+let horizontal = new Vec3(viewportWidth, 0, 0);
+let vertical = new Vec3(0, viewportHeight, 0);
+let lowerLeftCorner = camPosition.minus(horizontal.scale(0.5)).minus(vertical.scale(0.5)).minus(new Vec3(0, 0, focalLength));
+
 let colour = new Vec3(0,0,0)
 
 for (let i = 0; i < imageWidth; i++)
@@ -57,8 +84,9 @@ for (let i = 0; i < imageWidth; i++)
     {
         let u = i / (imageWidth-1);
         let v = j / (imageHeight-1);
-        colour.x = v * 255;
-        colour.y = v * 255;
+
+        let ray = new Ray(camPosition, lowerLeftCorner.add(horizontal.scale(u)).add(vertical.scale(v)).minus(camPosition));
+        colour = rayColour(ray).scale(255);
         setPixel(i,j,colour)
     }
 }

@@ -1,3 +1,5 @@
+import { Vec3 } from "./Vector3.js";
+
 class Ray
 {
     constructor (origin, direction)
@@ -10,7 +12,7 @@ class Ray
     pointAt(t){
         //p = o + dt
 
-        return new Vec3((this.origin.x + this.direction.x * t), (this.origin.y + this.direction.y * t), (this.origin.z + this.direction.z * t));
+        return this.origin.add(this.direction.scale(t));
     }
 }
 
