@@ -56,7 +56,7 @@ function rayColour(ray)
     let diffuse = Math.max(castResult.normal.dot(negLightDirection), 0);
     //let colour = albedo.scale(diffuse)
 
-    let shadow = new Ray(castResult.position, negLightDirection);
+    let shadow = new Ray(castResult.position.add(castResult.normal.scale(0.05)), negLightDirection);
     let shadowCast = traceRay(shadow);
 
     let reflectionVector = lightDirection.minus(castResult.normal.scale(2 * castResult.normal.dot(lightDirection)));
@@ -65,6 +65,7 @@ function rayColour(ray)
 
     //let colour = albedo.multiply(new Vec3(0.05, diffuse, specularScalar));
     let colour = albedo.scale(0.05 + diffuse + specular);
+    colour = new Vec3(Math.sqrt(colour.x), Math.sqrt(colour.y), Math.sqrt(colour.z)); //Gamma Correction
 
     if(shadowCast.t > 0){
         colour = colour.scale(0.4);
@@ -106,7 +107,7 @@ let lowerLeftCorner = camPosition.minus(horizontal.scale(0.5)).minus(vertical.sc
 let lightDirection = new Vec3(-1.1, -1.3, -1.5).normalised();
 let negLightDirection = new Vec3(-lightDirection.x, -lightDirection.y, -lightDirection.z);
 
-let colour = new Vec3(0,0,0)
+let multiCount = 100;
 
 for (let i = 0; i < imageWidth; i++)
 {
@@ -115,8 +116,24 @@ for (let i = 0; i < imageWidth; i++)
         let u = i / (imageWidth-1);
         let v = j / (imageHeight-1);
 
-        let ray = new Ray(camPosition, lowerLeftCorner.add(horizontal.scale(u)).add(vertical.scale(v)).minus(camPosition));
-        colour = rayColour(ray).scale(255);
+        let colour = new Vec3(0, 0, 0);
+
+        for (let h = 0; h < multiCount; h++){
+
+            let direction = lowerLeftCorner.add(horizontal.scale(u)).add(vertical.scale(v)).minus(camPosition);
+            direction = direction.add(new Vec3(Math.random()/imageWidth, Math.random()/imageHeight, 0));
+
+            let ray = new Ray(camPosition, direction);
+
+            colour = colour.add(rayColour(ray));
+        }
+        
+        colour = colour.scale(1/multiCount);
+        colour = colour.scale(255);
         setPixel(i,j,colour)
+
+        // let ray = new Ray(camPosition, lowerLeftCorner.add(horizontal.scale(u)).add(vertical.scale(v)).minus(camPosition));
+        // colour = rayColour(ray).scale(255);
+        // setPixel(i,j,colour)
     }
 }
