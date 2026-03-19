@@ -107,6 +107,7 @@ let lowerLeftCorner = camPosition.minus(horizontal.scale(0.5)).minus(vertical.sc
 let lightDirection = new Vec3(-1.1, -1.3, -1.5).normalised();
 let negLightDirection = new Vec3(-lightDirection.x, -lightDirection.y, -lightDirection.z);
 
+//MULTISAMPLING//
 let multiCount = 100;
 
 for (let i = 0; i < imageWidth; i++)

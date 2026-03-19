@@ -2,3 +2,9 @@
 # GAMR1530 Coursework 2026
 You are to build a ray tracer in JavaScript which uses the Phong Lighting model.
 This repo will be your submission.
+
+Student No.: P2934958
+I've created a basic ray tracer which includes: gradient background, rendered spheres, shadows, shading, diffuse & specular lighting, gamma correction and multi-sampling
+
+I opened index.html using a live server on Visual Studio Code (an image of the scene is included in the repo)
+The scene takes a few seconds to load
